@@ -1,0 +1,7 @@
+/*
+!.gitignore
+!tmux.conf
+!setup.sh
+!plugins
+plugins/*
+!plugins/tpm
