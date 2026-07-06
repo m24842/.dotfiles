@@ -75,6 +75,11 @@ fi
 
 # Shared configurations
 
+# NVM
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
 # Venv activation
 autoload -U add-zsh-hook
 venv_hook() {
