@@ -9,7 +9,7 @@
   "rose-pine": { "branch": "main", "commit": "ff483051a47e27d84bdef47703538df1ed9f4a47" },
   "snacks.nvim": { "branch": "main", "commit": "882c996cf28183f4d63640de0b4c02ec886d01f2" },
   "toggleterm.nvim": { "branch": "main", "commit": "50ea089fc548917cc3cc16b46a8211833b9e3c7c" },
-  "tree-sitter-manager.nvim": { "branch": "main", "commit": "966c28dbc68fc99c82c51a64b6ec37f420aab880" },
+  "tree-sitter-manager.nvim": { "branch": "main", "commit": "09e3a321eea8100cacd2e759c3a6c9d350295fab" },
   "vim-visual-multi": { "branch": "master", "commit": "a6975e7c1ee157615bbc80fc25e4392f71c344d4" },
   "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" }
 }

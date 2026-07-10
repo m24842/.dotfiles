@@ -34,8 +34,8 @@ vim.keymap.set("n", "<C-S-L>", ":call vm#commands#find_all(0, 1)<CR>", { desc = 
 
 -- Terminal keymaps
 vim.keymap.set("t", "<D-k>", [[<C-l>]], { noremap = true, silent = true, desc = "Clear terminal" })
-vim.keymap.set("t", "<C-S-k>", function() vim.cmd("resize +2") end, { desc = "Increase terminal height" })
-vim.keymap.set("t", "<C-S-j>", function() vim.cmd("resize -2") end, { desc = "Decrease terminal height" })
+vim.keymap.set("t", "<C-S-Up>", function() vim.cmd("resize +2") end, { desc = "Increase terminal height" })
+vim.keymap.set("t", "<C-S-Down>", function() vim.cmd("resize -2") end, { desc = "Decrease terminal height" })
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { silent = true }, { desc = "Exit terminal mode" })
 
 -- Bootstrap lazy.nvim
