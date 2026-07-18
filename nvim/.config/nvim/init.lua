@@ -278,7 +278,7 @@ require("lazy").setup({
 
                 vim.lsp.config("basedpyright", {
                     cmd_env = {
-                        NODE_OPTIONS = "--max-old-space-size=4096"
+                        NODE_OPTIONS = "--max-old-space-size=8192"
                     },
                     root_markers = {
                         ".git",
@@ -287,12 +287,14 @@ require("lazy").setup({
                         basedpyright = {
                             analysis = {
                                 useLibraryCodeForTypes = true,
-                                diagnosticMode = "workspace",
+                                diagnosticMode = "openFilesOnly",
                                 exclude = {
                                     "**/node_modules",
                                     "**/__pycache__",
                                     "**/.venv",
                                     "**/venv",
+                                    "**/build",
+                                    "**/dist",
                                     "**/.git"
                                 },
                             }
