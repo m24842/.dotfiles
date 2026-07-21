@@ -11,8 +11,6 @@ vim.opt.updatetime = 400
 vim.opt.guicursor:append("t-v:blinkon0")
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
-vim.g.VM_leader = ","
-vim.g.VM_show_warnings = 0
 
 -- Keymaps
 vim.keymap.set("n", "<leader>/", ":let @+ = expand('%:p')<CR>", { desc = "Copy absolute file path" })
@@ -29,8 +27,12 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-vim.keymap.set("n", "<D-S-L>", ":call vm#commands#find_all(0, 1)<CR>", { desc = "Select all matches" })
-vim.keymap.set("n", "<C-S-L>", ":call vm#commands#find_all(0, 1)<CR>", { desc = "Select all matches" })
+vim.keymap.set({ "n", "v" }, "<D-S-L>", ":<C-u>call vm#commands#find_all(0, 1)<CR>", { 
+    desc = "VM: Select all matches" 
+})
+vim.keymap.set({ "n", "v" }, "<C-S-L>", ":<C-u>call vm#commands#find_all(0, 1)<CR>", { 
+    desc = "VM: Select all matches" 
+})
 
 -- Terminal keymaps
 vim.keymap.set("t", "<D-k>", [[<C-l>]], { noremap = true, silent = true, desc = "Clear terminal" })
@@ -350,7 +352,14 @@ require("lazy").setup({
                 map("i", "<C-]>", function() suggestion.dismiss() end, "Dismiss")
             end,
         },
-        { "mg979/vim-visual-multi", branch = "master" },
+        { 
+            "mg979/vim-visual-multi", 
+            branch = "master",
+            init = function()
+                vim.g.VM_leader = ","
+                vim.g.VM_show_warnings = 0
+            end
+        },
         {
             "saghen/blink.cmp",
             version = "*",
@@ -393,4 +402,18 @@ vim.diagnostic.config({
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
     pattern = "*",
     command = [[if mode() !~ '\v[vV^V]' && getcmdwintype() == '' | checktime | endif]],
+})
+
+-- Visual Multi scroll toggle
+vim.api.nvim_create_autocmd("User", {
+    pattern = "visual_multi_start",
+    callback = function()
+        vim.g.snacks_scroll = false
+    end,
+})
+vim.api.nvim_create_autocmd("User", {
+    pattern = "visual_multi_exit",
+    callback = function()
+        vim.g.snacks_scroll = true
+    end,
 })
