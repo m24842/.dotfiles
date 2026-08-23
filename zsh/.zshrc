@@ -48,18 +48,6 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # FZF
     export PATH="$HOME/.fzf/bin:$PATH"
 
-    # TensorRT
-    export TENSORRT_ROOT=$HOME/TensorRT-8.6.1.6
-    export LD_LIBRARY_PATH=$TENSORRT_ROOT/lib:$LD_LIBRARY_PATH
-
-    # cuDNN
-    export CUDNN_DIR=$HOME/cudnn-linux-x86_64-8.9.7.29_cuda11-archive
-    export LD_LIBRARY_PATH=$CUDNN_DIR/lib:$LD_LIBRARY_PATH
-
-    # MMDeploy SDK
-    export MMDEPLOY_DIR=$HOME/mmdeploy/build/install
-    export LD_LIBRARY_PATH=$MMDEPLOY_DIR/lib:$LD_LIBRARY_PATH
-
     # Conda initialization
     for conda_dir in "$HOME/anaconda3" "$HOME/miniconda3" "/opt/anaconda3"; do
         if [ -f "$conda_dir/bin/conda" ]; then
@@ -129,10 +117,6 @@ fi
 source "${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git/zinit.zsh"
 
 # Pure prompt
-zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
-zinit light sindresorhus/pure
-autoload -U promptinit; promptinit
-prompt pure
 PURE_GIT_PULL=0
 zstyle :prompt:pure:title show no
 zstyle :prompt:pure:git:stash show yes
@@ -141,6 +125,8 @@ zstyle :prompt:pure:git:arrow color white
 zstyle :prompt:pure:git:dirty color red
 zstyle :prompt:pure:prompt:error color red
 zstyle :prompt:pure:prompt:success color white
+zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
+zinit light sindresorhus/pure
 
 # Other plugins
 zinit light zsh-users/zsh-syntax-highlighting
@@ -170,3 +156,5 @@ alias tx='tmux'
 # Shell integrations
 source <(fzf --zsh)
 eval "$(zoxide init --cmd cd zsh)"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
