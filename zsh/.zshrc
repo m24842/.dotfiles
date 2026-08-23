@@ -25,12 +25,17 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
     export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
 
-    # Conda initialization
+    # Conda
     if [ -f "/opt/anaconda3/bin/conda" ]; then
         eval "$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
     else
         [[ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]] && . "/opt/anaconda3/etc/profile.d/conda.sh"
     fi
+
+    # NVM
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 
     # PyTorch configuration
     export PYTORCH_ENABLE_MPS_FALLBACK=1
@@ -48,7 +53,7 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     # FZF
     export PATH="$HOME/.fzf/bin:$PATH"
 
-    # Conda initialization
+    # Conda
     for conda_dir in "$HOME/anaconda3" "$HOME/miniconda3" "/opt/anaconda3"; do
         if [ -f "$conda_dir/bin/conda" ]; then
             eval "$("$conda_dir/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
@@ -59,14 +64,13 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
         fi
     done
 
+    # NVM
+    export NVM_DIR="$HOME/.config/nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 fi
 
 # Shared configurations
-
-# NVM
-export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Venv activation
 autoload -U add-zsh-hook

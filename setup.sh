@@ -42,12 +42,14 @@ install_mac() {
 
     info "Updating Homebrew and installing dependencies..."
     brew update
-    brew install -y neovim tmux zsh git gh curl unzip ripgrep fd node npm gcc \
+    brew install neovim tmux zsh git gh curl unzip ripgrep fd nvm node npm gcc \
                  fzf zoxide llvm ffmpeg android-commandlinetools
 
     export NVM_DIR="$HOME/.nvm"
     [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
     [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
+    npm install -g --allow-scripts=tree-sitter-cli tree-sitter-cli
 }
 
 install_linux() {
@@ -77,14 +79,15 @@ install_linux() {
         error "Unsupported Linux package manager. Please install dependencies manually."
     fi
 
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
     export NVM_DIR="$HOME/.config/nvm"
+    
+    if [ ! -d "$NVM_DIR" ]; then
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    fi
+
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-}
 
-install_misc() {
-    info "Installing general packages."
     nvm install node
     nvm install-latest-npm
     npm install -g --allow-scripts=tree-sitter-cli tree-sitter-cli
@@ -107,7 +110,6 @@ case "$OS_TYPE" in
         error "Unsupported operating system: $OS_TYPE"
         ;;
 esac
-install_misc
 
 # 2. Set Zsh as Default Shell
 ZSH_PATH="$(command -v zsh)"
