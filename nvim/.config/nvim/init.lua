@@ -14,7 +14,7 @@ vim.g.maplocalleader = "\\"
 
 -- Keymaps
 vim.keymap.set("n", "<leader>/", ":let @+ = expand('%:p')<CR>", { desc = "Copy absolute file path" })
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
+vim.keymap.set("n", "<Esc>", "<CMD>nohlsearch<CR>", { desc = "Clear search highlights" })
 -- vim.keymap.set("n", "<leader>d", function() Snacks.dashboard() end, { desc = "Go to Dashboard" })
 vim.keymap.set("n", "K", function()
     vim.lsp.buf.hover({ 
@@ -375,6 +375,32 @@ require("lazy").setup({
                 signature = { enabled = true, window = { border = "rounded" } },
             },
         },
+        {
+            "amitds1997/remote-nvim.nvim",
+            version = "*",
+            dependencies = {
+                "nvim-lua/plenary.nvim",
+                "MunifTanjim/nui.nvim",
+                "nvim-telescope/telescope.nvim",
+            },
+            keys = {
+                { "<leader>rs", "<CMD>RemoteStart<CR>", desc = "RemoteStart" },
+                { "<leader>rS", ":RemoteStop", desc = "RemoteStop" },
+                { "<leader>rc", ":RemoteConfigDel", desc = "RemoteConfigDel" },
+                { "<leader>rC", ":RemoteCleanup", desc = "RemoteCleanup" },
+            },
+            opts = {
+                client_callback = function(port, _)
+                    local cmd = ("ghostty -e nvim --remote-ui --server localhost:%s"):format(port)
+                    vim.fn.jobstart(cmd, {
+                        detach = true,
+                        on_exit = function(job_id, exit_code, event_type)
+                            print("Client", job_id, "exited with code", exit_code, "Event type:", event_type)
+                        end,
+                    })
+                end,
+            },
+        },
     },
     checker = { enabled = true },
 })
@@ -417,3 +443,4 @@ vim.api.nvim_create_autocmd("User", {
         vim.g.snacks_scroll = true
     end,
 })
+

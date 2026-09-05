@@ -61,20 +61,10 @@ install_linux() {
         sudo apt-get install -y xclip tmux zsh git gh curl unzip build-essential \
                                 ripgrep fd-find nodejs fzf zoxide llvm ffmpeg
         sudo snap install nvim
-    elif command -v dnf &>/dev/null; then
-        info "Using DNF package manager..."
-        sudo dnf check-update || true
-        sudo dnf install -y xclip neovim tmux zsh git gh curl unzip gcc gcc-c++ make \
-                            ripgrep fd-find nodejs fzf zoxide llvm ffmpeg
     elif command -v pacman &>/dev/null; then
         info "Using Pacman package manager..."
         sudo pacman -Sy --needed --noconfirm xclip neovim tmux zsh git gh curl unzip base-devel \
                                              ripgrep fd nodejs fzf zoxide llvm ffmpeg
-    elif command -v zypper &>/dev/null; then
-        info "Using Zypper package manager..."
-        sudo zypper refresh
-        sudo zypper install -y xclip neovim tmux zsh git gh url unzip gcc gcc-c++ make \
-                               ripgrep fd nodejs fzf zoxide llvm ffmpeg
     else
         error "Unsupported Linux package manager. Please install dependencies manually."
     fi

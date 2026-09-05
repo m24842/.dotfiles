@@ -14,8 +14,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     export PKG_CONFIG_PATH="/opt/homebrew/opt/ffmpeg/lib/pkgconfig:$PKG_CONFIG_PATH"
     export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
     export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-    [[ -d "/opt/homebrew/opt/gnu-sed/libexec/gnubin" ]] && export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
     export PYTORCH_ENABLE_MPS_FALLBACK=1
+    if ! command -v tac >/dev/null 2>&1; then
+        tac() { tail -r; }
+        export -f tac
+    fi
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.fzf/bin:$PATH"
 fi
@@ -75,7 +78,7 @@ venv_hook() {
 }
 PROMPT_COMMAND="venv_hook;${PROMPT_COMMAND:-}"
 
-# Hugginface configuration
+# Huggingface configuration
 export TOKENIZERS_PARALLELISM=false
 
 # ==================================
@@ -84,68 +87,94 @@ export TOKENIZERS_PARALLELISM=false
 
 export LANG=en_US.UTF-8
 
-# History
+# History configuration
 HISTSIZE=5000
-HISTFILE=~/.zsh_history
-SAVEHIST=$HISTSIZE
-setopt inc_append_history
-unsetopt share_history
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_find_no_dups
-setopt hist_ignore_space
+HISTFILESIZE=5000
+HISTFILE=~/.bash_history
+HISTCONTROL=ignoreboth:erasedups
+shopt -s histappend
 
-# Initialize completions
-autoload -Uz compinit && compinit
+# Bash completions
+if ! shopt -oq posix; then
+    bind 'set completion-ignore-case on'
+    bind 'set show-all-if-ambiguous on'
 
-# Zinit configuration
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-if [ ! -d "$ZINIT_HOME" ]; then
-   mkdir -p "$(dirname $ZINIT_HOME)"
-   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+    if [[ "$OSTYPE" == "darwin"* && -f /opt/homebrew/etc/profile.d/bash_completion.sh ]]; then
+        . /opt/homebrew/etc/profile.d/bash_completion.sh
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+            . /usr/share/bash-completion/bash_completion
+        elif [[ -f /etc/bash_completion ]]; then
+            . /etc/bash_completion
+        fi
+    fi
 fi
-source "${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git/zinit.zsh"
 
-# Pure prompt
-PURE_GIT_PULL=0
-zstyle :prompt:pure:title show no
-zstyle :prompt:pure:git:stash show yes
-zstyle :prompt:pure:git:stash color white
-zstyle :prompt:pure:git:arrow color white
-zstyle :prompt:pure:git:dirty color red
-zstyle :prompt:pure:prompt:error color red
-zstyle :prompt:pure:prompt:success color white
-zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
-zinit light sindresorhus/pure
+# BLE.sh initialize
+BLE_DIR="$HOME/.local/share/blesh"
+if [[ -f "$BLE_DIR/ble.sh" && ! ${BLE_VERSION-} ]]; then
+    source "$BLE_DIR/ble.sh" --noattach
+fi
 
-# Other plugins
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-zinit light Aloxaf/fzf-tab
-zinit snippet OMZP::command-not-found
+# FZF tab completion
+FZF_TAB_DIR="$HOME/.fzf-tab-completion"
+if [[ -f "$FZF_TAB_DIR/bash/fzf-bash-completion.sh" ]]; then
+    export FZF_COMPLETION_OPTS="--color=info:bold:yellow --no-multi"
+    source "$FZF_TAB_DIR/bash/fzf-bash-completion.sh"
 
-# Completions
-zinit cdreplay -q
-zstyle ':completion:*' menu no
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
-zstyle ':fzf-tab:*' fzf-flags '--no-multi' '--color=info:bold:yellow'
+    if [[ ${BLE_VERSION-} ]]; then
+        ble-bind -m auto_complete -c TAB fzf_bash_completion
+        ble-bind -m menu_complete -c TAB fzf_bash_completion
+    else
+        bind -x '"\t": fzf_bash_completion'
+    fi
+    shopt -s no_empty_cmd_completion
+fi
+
+# Attach BLE.sh
+if [[ ${BLE_VERSION-} ]]; then
+    bleopt exec_errexit_mark=''
+    # General text
+    ble-face auto_complete='fg=#6e6a86'
+    ble-face syntax_default='none'
+    ble-face syntax_error='none'
+    ble-face syntax_comment='none'
+    ble-face syntax_varname='none'
+    ble-face argument_option='none'
+    # File text
+    ble-face filename_directory='none'
+    ble-face filename_link='none'
+    ble-face filename_other='none'
+    ble-face filename_ls_colors='none'
+    # Command text
+    ble-face command_builtin='fg=#31748f,bold'
+    ble-face command_alias='fg=#31748f,bold'
+    ble-face command_function='fg=#31748f,bold'
+    ble-face command_file='fg=#31748f,bold'
+fi
+
+# Cursor style
+PROMPT_COMMAND='echo -ne "\e[6 q"; '"$PROMPT_COMMAND"
+
+# Starship prompt (Pure prompt theme)
+if ! command -v starship &> /dev/null; then
+    curl -sS https://starship.rs/install.sh | sh
+fi
+eval "$(starship init bash)"
 
 # FZF configuration
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# Alias
-alias ls='ls --color'
+# Aliases
+alias ls='ls --color=auto'
 alias nv='nvim'
 alias c='clear'
 alias tx='tmux'
 
 # Shell integrations
-source <(fzf --zsh)
-eval "$(zoxide init --cmd cd zsh)"
+eval "$(zoxide init --cmd cd bash)"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+[[ ${BLE_VERSION-} ]] && ble-attach -d
