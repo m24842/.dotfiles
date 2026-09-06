@@ -34,7 +34,7 @@ vimcmd_symbol = "[❮](green)"
 format = "[$branch](242)"
 
 [git_status]
-format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](red) ($ahead_behind$stashed)](white)"
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](red) ($ahead_behind$stashed)](white) "
 conflicted = "\u200C"
 untracked = "\u200C"
 modified = "\u200C"
