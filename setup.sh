@@ -51,7 +51,7 @@ install_linux_tools() {
     fi
 
     # NVM
-    export NVM_DIR="$HOME/.nvm"
+    export NVM_DIR="$HOME/.config/nvm"
     if [[ ! -d "$NVM_DIR" ]]; then
         info "Installing NVM..."
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash

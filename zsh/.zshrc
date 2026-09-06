@@ -14,14 +14,14 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     export PKG_CONFIG_PATH="/opt/homebrew/opt/ffmpeg/lib/pkgconfig:$PKG_CONFIG_PATH"
     export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
     export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-    [[ -d "/opt/homebrew/opt/gnu-sed/libexec/gnubin" ]] && export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+    export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
     export PYTORCH_ENABLE_MPS_FALLBACK=1
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.fzf/bin:$PATH"
+    export NVM_DIR="$HOME/.config/nvm"
 fi
 
 # Lazy NVM
-export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 nvm() {
     unset -f nvm node npm npx
     if [[ "$OSTYPE" == "darwin"* ]]; then
