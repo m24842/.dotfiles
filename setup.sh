@@ -1,126 +1,100 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -e
 
-# Print styled messages
-info()  { echo -e "\033[1;34m[INFO]\033[0m $*"; }
-warn()  { echo -e "\033[1;33m[WARN]\033[0m $*"; }
-error() { echo -e "\033[1;31m[ERROR]\033[0m $*"; exit 1; }
-
-# Packages required:
-# - git, curl, unzip, tar, gzip, make, gcc/clang
-# - ripgrep, fd
-# - neovim, tmux, zsh
-# - nodejs, npm
+info() { echo -e "\033[34m[INFO]\033[0m $1"; }
+error() { echo -e "\033[31m[ERROR]\033[0m $1" >&2; exit 1; }
 
 OS_TYPE="$(uname -s)"
 
-if [[ "$OS_TYPE" == "Linux" ]] || [[ "$OS_TYPE" == "Darwin" ]]; then
-    info "Requesting administrator privileges..."
-    sudo -v
-
-    while true; do
-        sudo -n true
-        sleep 60
-        kill -0 "$$" 2>/dev/null || exit
-    done 2>/dev/null &
-    SUDO_KEEPALIVE_PID=$!
-    
-    trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT
-fi
-
-install_mac() {
-    info "Installing for MacOS"
-    if ! command -v brew &>/dev/null; then
-        info "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        
-        if [[ -f "/opt/homebrew/bin/brew" ]]; then
-            eval "$(/opt/homebrew/bin/brew shellenv)"
-        fi
+install_mac_tools() {
+    info "Installing general tools for macOS..."
+    if [[ -f "/opt/homebrew/bin/brew" ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    info "Updating Homebrew and installing dependencies..."
     brew update
-    brew install neovim tmux zsh git gh curl unzip ripgrep fd nvm node npm gcc \
-                 fzf zoxide llvm ffmpeg android-commandlinetools
-
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-
-    npm install -g --allow-scripts=tree-sitter-cli tree-sitter-cli
+    brew install git gh curl unzip ripgrep fd llvm ffmpeg \
+                 android-commandlinetools nvm pyenv miniconda
 }
 
-install_linux() {
-    info "Installing for Linux."
-    
+install_linux_tools() {
+    info "Installing general tools for Linux..."
+
     if command -v apt-get &>/dev/null; then
-        info "Using APT package manager..."
         sudo apt-get update -y
-        sudo apt-get install -y xclip tmux zsh git gh curl unzip build-essential \
-                                ripgrep fd-find nodejs fzf zoxide llvm ffmpeg
-        sudo snap install nvim
+        sudo apt-get install -y git gh curl unzip build-essential ripgrep fd-find \
+                                llvm ffmpeg libssl-dev zlib1g-dev libbz2-dev \
+                                libreadline-dev libsqlite3-dev libffi-dev
     elif command -v pacman &>/dev/null; then
-        info "Using Pacman package manager..."
-        sudo pacman -Sy --needed --noconfirm xclip neovim tmux zsh git gh curl unzip base-devel \
-                                             ripgrep fd nodejs fzf zoxide llvm ffmpeg
+        sudo pacman -Sy --needed --noconfirm git gh curl unzip base-devel ripgrep fd \
+                                           llvm ffmpeg openssl zlib \
+                                           bzip2 readline sqlite libffi
     else
         error "Unsupported Linux package manager. Please install dependencies manually."
     fi
 
-    export NVM_DIR="$HOME/.config/nvm"
-    
-    if [ ! -d "$NVM_DIR" ]; then
+    # Pyenv
+    export PYENV_ROOT="$HOME/.pyenv"
+    if [[ ! -d "$PYENV_ROOT" ]]; then
+        info "Installing Pyenv..."
+        curl -fsSL https://pyenv.run | bash
+    fi
+
+    # Miniconda
+    if [[ ! -d "$HOME/miniconda3" ]]; then
+        info "Installing Miniconda..."
+        mkdir -p "$HOME/miniconda3"
+        curl -fsSL https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o "$HOME/miniconda3/miniconda.sh"
+        bash "$HOME/miniconda3/miniconda.sh" -b -u -p "$HOME/miniconda3"
+        rm -rf "$HOME/miniconda3/miniconda.sh"
+    fi
+
+    # NVM
+    export NVM_DIR="$HOME/.nvm"
+    if [[ ! -d "$NVM_DIR" ]]; then
+        info "Installing NVM..."
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
     fi
-
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-    nvm install node
-    nvm install-latest-npm
-    npm install -g --allow-scripts=tree-sitter-cli tree-sitter-cli
 }
 
-# 0. Fetch Submodules
-git submodule update --init --recursive
-git submodule update --remote --merge
-cd ~
-
-# 1. Install System Dependencies
 case "$OS_TYPE" in
-    Darwin)
-        install_mac
-        ;;
-    Linux)
-        install_linux
-        ;;
-    *)
-        error "Unsupported operating system: $OS_TYPE"
-        ;;
+    Darwin) install_mac_tools ;;
+    Linux)  install_linux_tools ;;
+    *)      error "Unsupported operating system: $OS_TYPE" ;;
 esac
 
-# 2. Set Zsh as Default Shell
-ZSH_PATH="$(command -v zsh)"
+info "General tools setup complete!"
 
-if [[ -z "$ZSH_PATH" ]]; then
-    error "Zsh binary not found after installation."
-fi
+# Run additional setup scripts
+prompt_and_run() {
+    local script_name="$1"
+    local description="$2"
+    local script_path="./${script_name}"
 
-if [[ "$SHELL" != "$ZSH_PATH" ]]; then
-    info "Changing default shell to Zsh ($ZSH_PATH)..."
-    
-    # Ensure Zsh path is listed in /etc/shells before invoking chsh
-    if ! grep -qF "$ZSH_PATH" /etc/shells; then
-        info "Adding $ZSH_PATH to /etc/shells..."
-        echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
+    if [[ -f "$script_path" ]]; then
+        read -rp "Run ${description} (${script_name})? [y/N]: " response
+        case "$response" in
+            [yY][eE][sS]|[yY])
+                info "Executing ${script_name}..."
+                bash "$script_path"
+                ;;
+            *)
+                info "Skipping ${script_name}."
+                ;;
+        esac
+    else
+        info "Skipping ${script_name} (File not found)."
     fi
-    
-    sudo chsh -s "$ZSH_PATH" "$USER"
-    info "Default shell changed to Zsh."
-else
-    info "Zsh is already set as the default shell."
-fi
+}
 
-info "Setup complete!"
+echo "--------------------------------------------------"
+
+PARENT_DIR="$(dirname "$0")"
+
+prompt_and_run "$PARENT_DIR/nvim/setup.sh" "Neovim Setup"
+prompt_and_run "$PARENT_DIR/zsh/setup.sh"  "Zsh Setup"
+prompt_and_run "$PARENT_DIR/tmux/setup.sh" "Tmux Setup"
+prompt_and_run "$PARENT_DIR/bash/setup.sh" "Bash Setup"
+
+info "All requested setup scripts finished!"
