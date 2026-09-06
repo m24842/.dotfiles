@@ -35,12 +35,12 @@ format = "[$branch](242)"
 
 [git_status]
 format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](red) ($ahead_behind$stashed)](white)"
-conflicted = ""
-untracked = ""
-modified = ""
-staged = ""
-renamed = ""
-deleted = ""
+conflicted = "\u200C"
+untracked = "\u200C"
+modified = "\u200C"
+staged = "\u200C"
+renamed = "\u200C"
+deleted = "\u200C"
 stashed = "≡"
 
 [git_state]

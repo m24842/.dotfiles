@@ -103,12 +103,8 @@ if ! shopt -oq posix; then
 
     if [[ "$OSTYPE" == "darwin"* && -f /opt/homebrew/etc/profile.d/bash_completion.sh ]]; then
         . /opt/homebrew/etc/profile.d/bash_completion.sh
-    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        if [[ -f /usr/share/bash-completion/bash_completion ]]; then
-            . /usr/share/bash-completion/bash_completion
-        elif [[ -f /etc/bash_completion ]]; then
-            . /etc/bash_completion
-        fi
+    elif [[ "$OSTYPE" == "linux-gnu"* && -f /etc/bash_completion ]]; then
+        . /etc/bash_completion
     fi
 fi
 
@@ -118,22 +114,7 @@ if [[ -f "$BLE_DIR/ble.sh" && ! ${BLE_VERSION-} ]]; then
     source "$BLE_DIR/ble.sh" --noattach
 fi
 
-# FZF tab completion
-FZF_TAB_DIR="$HOME/.fzf-tab-completion"
-if [[ -f "$FZF_TAB_DIR/bash/fzf-bash-completion.sh" ]]; then
-    export FZF_COMPLETION_OPTS="--color=info:bold:yellow --no-multi"
-    source "$FZF_TAB_DIR/bash/fzf-bash-completion.sh"
-
-    if [[ ${BLE_VERSION-} ]]; then
-        ble-bind -m auto_complete -c TAB fzf_bash_completion
-        ble-bind -m menu_complete -c TAB fzf_bash_completion
-    else
-        bind -x '"\t": fzf_bash_completion'
-    fi
-    shopt -s no_empty_cmd_completion
-fi
-
-# Attach BLE.sh
+# BLE.sh configuration
 if [[ ${BLE_VERSION-} ]]; then
     bleopt exec_errexit_mark=''
     # General text
@@ -153,6 +134,15 @@ if [[ ${BLE_VERSION-} ]]; then
     ble-face command_alias='fg=#31748f,bold'
     ble-face command_function='fg=#31748f,bold'
     ble-face command_file='fg=#31748f,bold'
+fi
+
+# FZF tab completion
+FZF_TAB_DIR="$HOME/.fzf-tab-completion"
+if [[ -f "$FZF_TAB_DIR/bash/fzf-bash-completion.sh" ]]; then
+    export FZF_COMPLETION_OPTS="--color=info:bold:yellow --no-multi"
+    source "$FZF_TAB_DIR/bash/fzf-bash-completion.sh"
+    bind -x '"\t": fzf_bash_completion'
+    shopt -s no_empty_cmd_completion
 fi
 
 # Starship prompt (Pure prompt theme)
@@ -176,4 +166,4 @@ eval "$(zoxide init --cmd cd bash)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-[[ ${BLE_VERSION-} ]] && ble-attach -d
+[[ ${BLE_VERSION-} ]] && ble-attach
