@@ -96,8 +96,10 @@ shopt -s histappend
 
 # Bash completions
 if ! shopt -oq posix; then
-    bind 'set completion-ignore-case on'
-    bind 'set show-all-if-ambiguous on'
+    if [[ $- == *i* ]]; then
+        bind 'set completion-ignore-case on'
+        bind 'set show-all-if-ambiguous on'
+    fi
 
     if [[ "$OSTYPE" == "darwin"* && -f /opt/homebrew/etc/profile.d/bash_completion.sh ]]; then
         . /opt/homebrew/etc/profile.d/bash_completion.sh
@@ -152,9 +154,6 @@ if [[ ${BLE_VERSION-} ]]; then
     ble-face command_function='fg=#31748f,bold'
     ble-face command_file='fg=#31748f,bold'
 fi
-
-# Cursor style
-PROMPT_COMMAND='echo -ne "\e[6 q"; '"$PROMPT_COMMAND"
 
 # Starship prompt (Pure prompt theme)
 if ! command -v starship &> /dev/null; then
