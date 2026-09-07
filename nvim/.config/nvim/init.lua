@@ -5,8 +5,24 @@ vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.autoindent = true
 vim.opt.smartindent = true
-vim.g.clipboard = 'osc52'
 vim.opt.clipboard = "unnamedplus"
+vim.g.clipboard = {
+  name = 'OSC 52',
+  copy = {
+    ['+'] = function(lines) require('vim.ui.clipboard.osc52').copy('+')(lines) end,
+    ['*'] = function(lines) require('vim.ui.clipboard.osc52').copy('*')(lines) end,
+  },
+  paste = {
+    ['+'] = function()
+      local info = vim.fn.getreginfo('"')
+      return { info.regcontents or {}, info.regtype or 'v' }
+    end,
+    ['*'] = function()
+      local info = vim.fn.getreginfo('"')
+      return { info.regcontents or {}, info.regtype or 'v' }
+    end,
+  },
+}
 vim.opt.number = true
 vim.opt.updatetime = 400
 vim.opt.guicursor:append("t-v:blinkon0")
@@ -169,7 +185,7 @@ require("lazy").setup({
                         },
                     }
                 },
-                image = { backend = "kitty" },
+                image = { enabled = true, backend = "kitty" },
                 indent = { enabled = true },
                 input = { enabled = true },
                 notifier = { enabled = true },
@@ -208,6 +224,7 @@ require("lazy").setup({
                     "python",
                     "rust",
                     "sql",
+                    "systemverilog",
                     "toml",
                     "typescript",
                     "vim",
@@ -274,6 +291,8 @@ require("lazy").setup({
                         vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
                     end,
                 })
+
+                vim.lsp.set_log_level("ERROR")
                 
                 vim.lsp.config("*", {
                     capabilities = require("blink.cmp").get_lsp_capabilities(),
@@ -298,11 +317,16 @@ require("lazy").setup({
                                     "**/venv",
                                     "**/build",
                                     "**/dist",
-                                    "**/.git"
+                                    "**/.git",
                                 },
                             }
                         }
                     }
+                })
+
+                vim.lsp.config("verible", {
+                    root_markers = { ".git" },
+                    cmd = { "verible-verilog-ls" },
                 })
 
                 vim.lsp.config("lua_ls", {})
@@ -310,7 +334,7 @@ require("lazy").setup({
                 vim.lsp.config("clangd", {})
 
                 require("mason-lspconfig").setup({
-                    ensure_installed = { "lua_ls", "basedpyright", "ts_ls", "clangd" },
+                    ensure_installed = { "lua_ls", "basedpyright", "ts_ls", "clangd", "verible" },
                 })
             end
         },
@@ -386,9 +410,9 @@ require("lazy").setup({
             },
             keys = {
                 { "<leader>rs", "<CMD>RemoteStart<CR>", desc = "RemoteStart" },
-                { "<leader>rS", ":RemoteStop", desc = "RemoteStop" },
-                { "<leader>rc", ":RemoteConfigDel", desc = "RemoteConfigDel" },
-                { "<leader>rC", ":RemoteCleanup", desc = "RemoteCleanup" },
+                { "<leader>rS", ":RemoteStop ", desc = "RemoteStop" },
+                { "<leader>rc", ":RemoteConfigDel ", desc = "RemoteConfigDel" },
+                { "<leader>rC", ":RemoteCleanup ", desc = "RemoteCleanup" },
             },
             opts = {
                 client_callback = function(port, _)
