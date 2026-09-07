@@ -206,7 +206,6 @@ require("lazy").setup({
             config = function()
                 require("nvim-treesitter.configs").setup({
                     prefer_git = true,
-                    -- compilers = { "gcc" },
                     ensure_installed = {
                         "bash",
                         "c",
