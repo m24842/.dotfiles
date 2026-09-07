@@ -22,7 +22,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     fi
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
     export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.fzf/bin:$PATH"
-    export NVM_DIR="$HOME/.config/nvm"
+    if [ -d "$HOME/.nvm" ]; then
+        export NVM_DIR="$HOME/.nvm"
+    elif [ -d "$HOME/.config/nvm" ]; then
+        export NVM_DIR="$HOME/.config/nvm"
+    fi
 fi
 
 # Lazy NVM

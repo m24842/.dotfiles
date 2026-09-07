@@ -7,21 +7,15 @@ vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.clipboard = "unnamedplus"
 vim.g.clipboard = {
-  name = 'OSC 52',
-  copy = {
-    ['+'] = function(lines) require('vim.ui.clipboard.osc52').copy('+')(lines) end,
-    ['*'] = function(lines) require('vim.ui.clipboard.osc52').copy('*')(lines) end,
-  },
-  paste = {
-    ['+'] = function()
-      local info = vim.fn.getreginfo('"')
-      return { info.regcontents or {}, info.regtype or 'v' }
-    end,
-    ['*'] = function()
-      local info = vim.fn.getreginfo('"')
-      return { info.regcontents or {}, info.regtype or 'v' }
-    end,
-  },
+    name = 'OSC 52',
+    copy = {
+        ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+        ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+    },
+    paste = {
+        ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+        ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+    },
 }
 vim.opt.number = true
 vim.opt.updatetime = 400

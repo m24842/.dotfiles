@@ -35,9 +35,18 @@ install_linux_nvim() {
         error "Unsupported Linux package manager."
     fi
 
-    export NVM_DIR="$HOME/.config/nvm"
-    if [ ! -d "$NVM_DIR" ]; then
+    if [ -d "$HOME/.nvm" ]; then
+        export NVM_DIR="$HOME/.nvm"
+    elif [ -d "$HOME/.config/nvm" ]; then
+        export NVM_DIR="$HOME/.config/nvm"
+    else
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    fi
+
+    if [ -d "$HOME/.nvm" ]; then
+        export NVM_DIR="$HOME/.nvm"
+    elif [ -d "$HOME/.config/nvm" ]; then
+        export NVM_DIR="$HOME/.config/nvm"
     fi
 
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
