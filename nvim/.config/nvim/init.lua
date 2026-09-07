@@ -204,7 +204,11 @@ require("lazy").setup({
             branch = "master",
             build = ":TSUpdate",
             config = function()
+                local parser_dir = vim.fn.stdpath("data") .. "/site"
+                vim.opt.runtimepath:append(parser_dir)
+
                 require("nvim-treesitter.configs").setup({
+                    parser_install_dir = parser_dir,
                     prefer_git = true,
                     ensure_installed = {
                         "bash",
