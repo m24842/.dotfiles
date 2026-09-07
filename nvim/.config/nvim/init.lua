@@ -286,8 +286,6 @@ require("lazy").setup({
                     end,
                 })
 
-                vim.lsp.set_log_level("ERROR")
-                
                 vim.lsp.config("*", {
                     capabilities = require("blink.cmp").get_lsp_capabilities(),
                 })
