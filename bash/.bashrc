@@ -81,7 +81,7 @@ venv_hook() {
         deactivate 2>/dev/null
     fi
 }
-PROMPT_COMMAND="venv_hook;${PROMPT_COMMAND:-}"
+venv_hook
 
 # Huggingface configuration
 export TOKENIZERS_PARALLELISM=false
@@ -121,7 +121,8 @@ fi
 
 # BLE.sh configuration
 if [[ ${BLE_VERSION-} ]]; then
-    bleopt exec_errexit_mark=''
+    blehook PRECMD+=venv_hook
+    bleopt exec_exit_mark=''
     # General text
     ble-face auto_complete='fg=#6e6a86'
     ble-face syntax_default='none'
@@ -162,6 +163,9 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Aliases
 alias ls='ls --color=auto'
+alias la='ls -A'
+alias .='pwd'
+alias ..='cd ..'
 alias nv='nvim'
 alias c='clear'
 alias tx='tmux'

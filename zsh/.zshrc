@@ -68,6 +68,7 @@ conda() {
 }
 
 # Venv Hook
+autoload -U add-zsh-hook
 venv_hook() {
     if [[ -f ".venv/bin/activate" ]]; then
         if [[ "$VIRTUAL_ENV" != "$PWD/.venv" ]]; then
@@ -77,7 +78,8 @@ venv_hook() {
         deactivate 2>/dev/null
     fi
 }
-PROMPT_COMMAND="venv_hook;${PROMPT_COMMAND:-}"
+add-zsh-hook chpwd venv_hook
+venv_hook
 
 # Hugginface configuration
 export TOKENIZERS_PARALLELISM=false
@@ -144,6 +146,9 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 # Alias
 alias ls='ls --color'
+alias la='ls -A'
+alias .='pwd'
+alias ..='cd ..'
 alias nv='nvim'
 alias c='clear'
 alias tx='tmux'
