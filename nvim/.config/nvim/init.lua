@@ -26,7 +26,7 @@ vim.g.maplocalleader = "\\"
 -- Keymaps
 vim.keymap.set("n", "<leader>/", ":let @+ = expand('%:p')<CR>", { desc = "Copy absolute file path" })
 vim.keymap.set("n", "<Esc>", "<CMD>nohlsearch<CR>", { desc = "Clear search highlights" })
--- vim.keymap.set("n", "<leader>d", function() Snacks.dashboard() end, { desc = "Go to Dashboard" })
+vim.keymap.set("n", "<leader>d", function() Snacks.dashboard() end, { desc = "Go to Dashboard" })
 vim.keymap.set("n", "K", function()
     vim.lsp.buf.hover({ 
         border = "rounded",
@@ -481,3 +481,14 @@ vim.api.nvim_create_autocmd("User", {
     end,
 })
 
+-- Force image re-render on buffer switch
+vim.api.nvim_create_autocmd("BufWinEnter", {
+    pattern = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" },
+    callback = function(args)
+        vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(args.buf) then
+                vim.bo[args.buf].bufhidden = "unload"
+            end
+        end)
+    end,
+})
