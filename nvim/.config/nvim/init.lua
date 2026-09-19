@@ -38,12 +38,20 @@ vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
 vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
 vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
-vim.keymap.set({ "n", "v" }, "<D-S-L>", ":<C-u>call vm#commands#find_all(0, 1)<CR>", { 
-    desc = "VM: Select all matches" 
+vim.keymap.set("n", "<D-S-L>", ":<C-u>call vm#commands#find_all(0, 1)<CR>", {
+    desc = "VM: Select all word matches"
 })
-vim.keymap.set({ "n", "v" }, "<C-S-L>", ":<C-u>call vm#commands#find_all(0, 1)<CR>", { 
-    desc = "VM: Select all matches" 
+vim.keymap.set("n", "<C-S-L>", ":<C-u>call vm#commands#find_all(0, 1)<CR>", {
+    desc = "VM: Select all word matches"
 })
+vim.keymap.set("x", "<D-S-L>", "<Plug>(VM-Visual-All)", {
+    desc = "VM: Select all matches for visual selection"
+})
+vim.keymap.set("x", "<C-S-L>", "<Plug>(VM-Visual-All)", {
+    desc = "VM: Select all matches for visual selection"
+})
+vim.keymap.set("n", "<leader>to", "<CMD>tabnew<CR>", { desc = "Open new tab" })
+vim.keymap.set("n", "<leader>tx", "<CMD>tabclose<CR>", { desc = "Close current tab" })
 
 -- Terminal keymaps
 vim.keymap.set("t", "<D-k>", [[<C-l>]], { noremap = true, silent = true, desc = "Clear terminal" })
@@ -106,12 +114,7 @@ require("lazy").setup({
  ███████████ ███    ███ █████████ █████ █████ ████ █████ 
 ██████  █████████████████████ ████ █████ █████ ████ ██████]],
                         keys = {
-                            { icon = "", key = "f", desc = "find file", action = ":lua Snacks.dashboard.pick('files')", hidden = true },
-                            { icon = "", key = "n", desc = "new file", action = ":ene | startinsert", hidden = true },
-                            { icon = "", key = "g", desc = "grep text", action = ":lua Snacks.dashboard.pick('live_grep')", hidden = true },
-                            { icon = "", key = "r", desc = "recent file", action = ":lua Snacks.dashboard.pick('oldfiles')", hidden = true },
                             { icon = "", key = "c", desc = "config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})", hidden = true },
-                            { icon = "", key = "s", desc = "session", section = "session", hidden = true },
                             { icon = "", key = "L", desc= "Lazy", action = ":Lazy", enabled = package.loaded.lazy ~= nil, hidden = true },
                             { icon = "", key = "q", desc = "quit", action = ":qa", hidden = true  },
                         },
