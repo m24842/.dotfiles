@@ -123,6 +123,9 @@ fi
 if [[ ${BLE_VERSION-} ]]; then
     blehook PRECMD+=venv_hook
     bleopt exec_exit_mark=''
+    bleopt exec_errexit_mark=''
+    bleopt prompt_eol_mark=''
+    bleopt exec_elapsed_mark=''
     # General text
     ble-face auto_complete='fg=#6e6a86'
     ble-face syntax_default='none'
