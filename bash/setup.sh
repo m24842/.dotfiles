@@ -15,6 +15,8 @@ install_mac_bash_deps() {
 
     brew update
     brew install bash bash-completion fzf zoxide starship
+
+    git clone https://github.com/lincheney/fzf-tab-completion.git ~/.fzf-tab-completion
 }
 
 install_linux_bash_deps() {
@@ -28,6 +30,8 @@ install_linux_bash_deps() {
     else
         error "Unsupported Linux package manager."
     fi
+
+    git clone https://github.com/lincheney/fzf-tab-completion.git ~/.fzf-tab-completion
 
     curl -sS https://starship.rs/install.sh | sh
 }
