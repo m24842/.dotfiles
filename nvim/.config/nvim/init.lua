@@ -17,6 +17,11 @@ vim.g.clipboard = {
         ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
     },
 }
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldopen:remove({ "hor", "search" })
 vim.opt.number = true
 vim.opt.updatetime = 400
 vim.opt.guicursor:append("t-v:blinkon0")
