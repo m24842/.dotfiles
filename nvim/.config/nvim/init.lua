@@ -25,6 +25,7 @@ vim.opt.foldopen:remove({ "hor", "search" })
 vim.opt.number = true
 vim.opt.updatetime = 400
 vim.opt.guicursor:append("t-v:blinkon0")
+vim.opt.mouse = 'a'
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
