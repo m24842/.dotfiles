@@ -70,26 +70,19 @@ conda() {
 # Venv Hook
 autoload -U add-zsh-hook
 venv_hook() {
-    local dir="$PWD"
-    local venv_path=""
+    local venv_path="$PWD/.venv"
 
-    while [[ "$dir" != "/" ]]; do
-        if [[ -f "$dir/.venv/bin/activate" ]]; then
-            venv_path="$dir/.venv"
-            break
-        fi
-        dir="${dir:h}"
-    done
-
-    if [[ -n "$venv_path" ]]; then
+    if [[ -f "$venv_path/bin/activate" ]]; then
         if [[ "$VIRTUAL_ENV" != "$venv_path" ]]; then
             [[ -n "$VIRTUAL_ENV" ]] && deactivate 2>/dev/null
             source "$venv_path/bin/activate"
         fi
     elif [[ -n "$VIRTUAL_ENV" ]]; then
-        local pure_prompt="$PROMPT"
-        deactivate 2>/dev/null
-        PROMPT="$pure_prompt"
+        if [[ "$PWD/" != "$VIRTUAL_ENV:h/"* && "$PWD" != "$VIRTUAL_ENV:h" ]]; then
+            local pure_prompt="$PROMPT"
+            deactivate 2>/dev/null
+            PROMPT="$pure_prompt"
+        fi
     fi
 }
 add-zsh-hook chpwd venv_hook
