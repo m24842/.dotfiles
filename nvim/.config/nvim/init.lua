@@ -41,10 +41,6 @@ vim.keymap.set("n", "K", function()
         max_height = 10,
     })
 end, { desc = "Show docs" })
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to upper window" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 vim.keymap.set("n", "<D-S-L>", ":<C-u>call vm#commands#find_all(0, 1)<CR>", {
     desc = "VM: Select all word matches"
 })
@@ -448,6 +444,24 @@ require("lazy").setup({
                 { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
                 { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
                 { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+            },
+        },
+        {
+            "christoomey/vim-tmux-navigator",
+            cmd = {
+                "TmuxNavigateLeft",
+                "TmuxNavigateDown",
+                "TmuxNavigateUp",
+                "TmuxNavigateRight",
+                "TmuxNavigatePrevious",
+                "TmuxNavigatorProcessList",
+            },
+            keys = {
+                { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+                { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+                { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+                { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+                { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
             },
         },
     },
