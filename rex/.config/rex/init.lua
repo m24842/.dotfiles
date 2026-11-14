@@ -8,11 +8,17 @@ rex.bind("cmd+shift+r", "session.rename")
 rex.bind("cmd+shift+left", "client.tab.previous")
 rex.bind("cmd+shift+right", "client.tab.next")
 
+-- Pane navigation
+rex.bind("ctrl+cmd+left", "pane.focus.left")
+rex.bind("ctrl+cmd+right", "pane.focus.right")
+rex.bind("ctrl+cmd+up", "pane.focus.up")
+rex.bind("ctrl+cmd+down", "pane.focus.down")
+
 -- Pane split
-rex.bind("ctrl+cmd+right", "pane.split", { direction = "right" })
-rex.bind("ctrl+cmd+left", "pane.split", { direction = "left" })
-rex.bind("ctrl+cmd+up", "pane.split", { direction = "up" })
-rex.bind("ctrl+cmd+down", "pane.split", { direction = "down"})
+rex.bind("alt+cmd+left", "pane.split.left")
+rex.bind("alt+cmd+right", "pane.split.right")
+rex.bind("alt+cmd+up", "pane.split.up")
+rex.bind("alt+cmd+down", "pane.split.down")
 
 -- Pane resize
 rex.bind("alt+h", "pane.resize", { amount = 2, direction = "left" })
