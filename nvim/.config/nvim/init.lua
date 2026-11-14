@@ -7,16 +7,19 @@ vim.opt.shiftround = true
 vim.opt.autoindent = true
 -- vim.opt.smartindent = true
 vim.opt.clipboard = "unnamedplus"
+local on_mac = vim.fn.has("mac") == 1
+local osc52 = require("vim.ui.clipboard.osc52")
 vim.g.clipboard = {
-    name = 'OSC 52',
+    name = "macOS Clipboard + OSC 52",
     copy = {
-        ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-        ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+        ["+"] = osc52.copy("+"),
+        ["*"] = osc52.copy("*"),
     },
     paste = {
-        ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-        ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+        ["+"] = on_mac and "pbpaste" or osc52.paste("+"),
+        ["*"] = on_mac and "pbpaste" or osc52.paste("*"),
     },
+    cache_enabled = 0,
 }
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99

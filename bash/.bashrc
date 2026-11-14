@@ -86,6 +86,9 @@ venv_hook
 # Huggingface configuration
 export TOKENIZERS_PARALLELISM=false
 
+# OpenCode configuration
+export EDITOR="nvim"
+
 # ==================================
 # ===== Cmd Line Configurations ====
 # ==================================
@@ -172,6 +175,7 @@ alias ..='cd ..'
 alias nv='nvim'
 alias c='clear'
 alias tx='tmux'
+alias oc='opencode'
 
 # Shell integrations
 eval "$(zoxide init --cmd cd bash)"
