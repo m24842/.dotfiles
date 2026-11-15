@@ -45,8 +45,16 @@ vim.keymap.set("x", "<C-S-L>", "<Plug>(VM-Visual-All)", {
 })
 vim.keymap.set("n", "<leader>to", "<CMD>tabnew<CR>", { desc = "Open new tab" })
 vim.keymap.set("n", "<leader>tx", "<CMD>tabclose<CR>", { desc = "Close current tab" })
-vim.keymap.set("n", "<leader>tn", "<CMD>tabnext<CR>", { desc = "Go to next tab" })
-vim.keymap.set("n", "<leader>tp", "<CMD>tabprevious<CR>", { desc = "Go to previous tab" })
+vim.keymap.set("n", "<leader>tn", function()
+    local count = vim.v.count1
+    local current = vim.fn.tabpagenr()
+    local total = vim.fn.tabpagenr("$")
+    local target = ((current - 1 + count) % total) + 1
+    vim.cmd("tabnext " .. target)
+end, { desc = "Go to next tab" })
+vim.keymap.set("n", "<leader>tp", function()
+    vim.cmd("tabprevious " .. vim.v.count1)
+end, { desc = "Go to previous tab" })
 
 -- Terminal keymaps
 vim.keymap.set("t", "<D-k>", [[<C-l>]], { noremap = true, silent = true, desc = "Clear terminal" })
