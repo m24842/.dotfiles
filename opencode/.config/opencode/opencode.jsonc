@@ -4,7 +4,7 @@
     "update": "auto",
     "compaction": {
         "auto": true,
-        "buffer": "30%",
+        "buffer": "15%",
         "keep": {
         "tokens": 20000
         }
