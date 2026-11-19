@@ -9,14 +9,5 @@
         "tokens": 20000
         }
     },
-    "providers": {
-        "cheapllm": {
-            "name": "CheapLLM",
-            "env": ["CHEAPLLM_API_KEY"],
-            "package": "@opencode/ai/providers/openai-compatible",
-            "settings": { "baseURL": "https://cheapllm.shop/v1" },
-            "models": { "deepseek-v4.1-flash-1017": { "name": "DeepSeek V4.1 Flash" } }
-        }
-    },
 }
 
