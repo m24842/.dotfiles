@@ -99,6 +99,7 @@ export EDITOR="nvim"
 # ==================================
 
 export LANG=en_US.UTF-8
+export TERM=xterm-256color
 
 # History
 HISTSIZE=5000
